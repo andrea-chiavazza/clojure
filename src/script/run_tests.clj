@@ -4,8 +4,9 @@
 clojure.test-clojure.agents
 clojure.test-clojure.annotations
 clojure.test-clojure.atoms
+clojure.test-clojure.clojure-math
 clojure.test-clojure.clojure-set
-clojure.test-clojure.clojure-walk                       
+clojure.test-clojure.clojure-walk
 clojure.test-clojure.clojure-xml
 clojure.test-clojure.clojure-zip
 clojure.test-clojure.compilation

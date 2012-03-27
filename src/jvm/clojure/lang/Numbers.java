@@ -98,12 +98,20 @@ static public boolean isNeg(Object x){
 	return ops(x).isNeg((Number)x);
 }
 
-static public Number minus(Object x){
-	return ops(x).negate((Number)x);
+static public Number minus(Number x){
+	return ops(x).negate(x);
 }
 
-static public Number minusP(Object x){
-	return ops(x).negateP((Number)x);
+static public Complex minus(Complex x){
+	return new Complex(minus(x.real), minus(x.imaginary));
+}
+
+static public Number minusP(Number x){
+	return ops(x).negateP(x);
+}
+
+static public Complex minusP(Complex x){
+	return new Complex(minusP(x.real), minusP(x.imaginary));
 }
 
 static public Number inc(Object x){
@@ -122,39 +130,182 @@ static public Number decP(Object x){
 	return ops(x).decP((Number)x);
 }
 
-static public Number add(Object x, Object y){
-	return ops(x).combine(ops(y)).add((Number)x, (Number)y);
+static public Number add(Number x, Number y){
+	return ops(x).combine(ops(y)).add(x, y);
 }
 
-static public Number addP(Object x, Object y){
-	return ops(x).combine(ops(y)).addP((Number)x, (Number)y);
+static public Object add(Complex x, Complex y) {
+	Number r = add(x.real, y.real);
+	Number im = add(x.imaginary, y.imaginary);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
 }
 
-static public Number minus(Object x, Object y){
+static public Complex add(Complex x, Number y) {
+	return new Complex(add(x.real, y), x.imaginary);
+}
+
+static public Complex add(Number x, Complex y) {
+	return new Complex(add(x, y.real), y.imaginary);
+}
+
+static public Number addP(Number x, Number y){
+	return ops(x).combine(ops(y)).addP(x, y);
+}
+
+static public Object addP(Complex x, Complex y) {
+	Number r = addP(x.real, y.real);
+	Number im = addP(x.imaginary, y.imaginary);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
+}
+
+static public Complex addP(Complex x, Number y) {
+	return new Complex(addP(x.real, y), x.imaginary);
+}
+
+static public Complex addP(Number x, Complex y) {
+	return new Complex(addP(x, y.real), y.imaginary);
+}
+
+static public Number minus(Number x, Number y){
 	Ops yops = ops(y);
-	return ops(x).combine(yops).add((Number)x, yops.negate((Number)y));
+	return ops(x).combine(yops).add(x, yops.negate(y));
 }
 
-static public Number minusP(Object x, Object y){
+static public Object minus(Complex x, Complex y) {
+	Number r = minus(x.real, y.real);
+	Number im = minus(x.imaginary, y.imaginary);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
+}
+
+static public Complex minus(Complex x, Number y) {
+	return new Complex(minus(x.real, y), x.imaginary);
+}
+
+static public Complex minus(Number x, Complex y) {
+	return new Complex(minus(x, y.real), y.imaginary);
+}
+
+static public Number minusP(Number x, Number y){
 	Ops yops = ops(y);
-	Number negativeY = yops.negateP((Number) y);
+	Number negativeY = yops.negateP(y);
 	Ops negativeYOps = ops(negativeY);
-	return ops(x).combine(negativeYOps).addP((Number)x, negativeY);
+	return ops(x).combine(negativeYOps).addP(x, negativeY);
 }
 
-static public Number multiply(Object x, Object y){
-	return ops(x).combine(ops(y)).multiply((Number)x, (Number)y);
+static public Object minusP(Complex x, Complex y) {
+	Number r = minusP(x.real, y.real);
+	Number im = minusP(x.imaginary, y.imaginary);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
 }
 
-static public Number multiplyP(Object x, Object y){
-	return ops(x).combine(ops(y)).multiplyP((Number)x, (Number)y);
+static public Complex minusP(Complex x, Number y) {
+	return new Complex(minusP(x.real, y), x.imaginary);
 }
 
-static public Number divide(Object x, Object y){
+static public Complex minusP(Number x, Complex y) {
+	return new Complex(minusP(x, y.real), y.imaginary);
+}
+
+static public Number multiply(Number x, Number y){
+	return ops(x).combine(ops(y)).multiply(x, y);
+}
+
+static public Object multiply(Number x, Complex y){
+	Number r = multiply(x, y.real);
+	Number im = multiply(x, y.imaginary);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
+}
+
+static public Object multiply(Complex x, Number y){
+	Number r = multiply(x.real, y);
+	Number im = multiply(x.imaginary, y);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
+}
+
+static public Object multiply(Complex x, Complex y){
+	Number r = minus(multiply(x.real, y.real), multiply(x.imaginary, y.imaginary));
+	Number im = add(multiply(x.real, y.imaginary), multiply(x.imaginary, y.real));
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
+}
+
+static public Number multiplyP(Number x, Number y){
+	return ops(x).combine(ops(y)).multiplyP(x, y);
+}
+
+	static public Object multiplyP(Number x, Complex y){
+		Number r = multiplyP(x, y.real);
+		Number im = multiplyP(x, y.imaginary);
+		if (isZero(im))
+			return r;
+		else
+			return new Complex(r, im);
+	}
+
+	static public Object multiplyP(Complex x, Number y){
+		Number r = multiplyP(x.real, y);
+		Number im = multiplyP(x.imaginary, y);
+		if (isZero(im))
+			return r;
+		else
+			return new Complex(r, im);
+	}
+
+	static public Object multiplyP(Complex x, Complex y){
+		Number r = minusP(multiplyP(x.real, y.real), multiplyP(x.imaginary, y.imaginary));
+		Number im = addP(multiplyP(x.real, y.imaginary), multiplyP(x.imaginary, y.real));
+		if (isZero(im))
+			return r;
+		else
+			return new Complex(r, im);
+	}
+
+static public Number divide(Number x, Number y){
 	Ops yops = ops(y);
-	if(yops.isZero((Number)y))
+	if(yops.isZero(y))
 		throw new ArithmeticException("Divide by zero");
-	return ops(x).combine(yops).divide((Number)x, (Number)y);
+	return ops(x).combine(yops).divide(x, y);
+}
+
+static public Complex divide(Number x, Complex y){
+	Number cc_dd = add(multiply(y.real, y.real), multiply(y.imaginary, y.imaginary));
+	return new Complex(
+		divide(multiply(x, y.real), cc_dd),
+		divide(minus(multiply(x, y.imaginary)), cc_dd));
+}
+
+static public Complex divide(Complex x, Number y) {
+	return new Complex(divide(x.real, y), divide(x.imaginary, y));
+}
+
+static public Object divide(Complex x, Complex y){
+	Number cc_dd = add(multiply(y.real, y.real), multiply(y.imaginary, y.imaginary));
+	Number r = divide(add(multiply(x.real, y.real), multiply(x.imaginary, y.imaginary)), cc_dd);
+	Number im = divide(minus(multiply(x.imaginary, y.real), multiply(x.real, y.imaginary)), cc_dd);
+	if (isZero(im))
+		return r;
+	else
+		return new Complex(r, im);
 }
 
 static public Number quotient(Object x, Object y){
@@ -202,8 +353,8 @@ static public double remainder(double n, double d){
 		}
 }
 
-static public boolean equiv(Object x, Object y){
-	return equiv((Number) x, (Number) y);
+static public boolean equiv(Complex x, Complex y){
+	return equiv(x.real, y.real) && equiv(x.imaginary, y.imaginary);
 }
 
 static public boolean equiv(Number x, Number y){
@@ -253,7 +404,7 @@ static BigInteger toBigInteger(Object x){
 	if(x instanceof BigInteger)
 		return (BigInteger) x;
 	else if(x instanceof BigInt)
-		return ((BigInt) x).toBigInteger();	
+		return ((BigInt) x).toBigInteger();
 	else
 		return BigInteger.valueOf(((Number) x).longValue());
 }
@@ -1632,10 +1783,10 @@ static public long unchecked_minus(long x){return -x;}
 static public long unchecked_inc(long x){return x + 1;}
 static public long unchecked_dec(long x){return x - 1;}
 
-static public Number unchecked_add(Object x, Object y){return add(x,y);}
-static public Number unchecked_minus(Object x, Object y){return minus(x,y);}
-static public Number unchecked_multiply(Object x, Object y){return multiply(x,y);}
-static public Number unchecked_minus(Object x){return minus(x);}
+static public Number unchecked_add(Number x, Number y){return add(x,y);}
+static public Number unchecked_minus(Number x, Number y){return minus(x,y);}
+static public Number unchecked_multiply(Number x, Number y){return multiply(x,y);}
+static public Number unchecked_minus(Number x){return minus(x);}
 static public Number unchecked_inc(Object x){return inc(x);}
 static public Number unchecked_dec(Object x){return dec(x);}
 
@@ -3519,20 +3670,20 @@ static public class L{
 //overload resolution
 //*
 
-static public Number add(long x, Object y){
-	return add((Object)x,y);
+static public Number add(long x, Number y){
+	return add((Number)x,y);
 }
 
-static public Number add(Object x, long y){
-	return add(x,(Object)y);
+static public Number add(Number x, long y){
+	return add(x,(Number)y);
 }
 
-static public Number addP(long x, Object y){
-	return addP((Object)x,y);
+static public Number addP(long x, Number y){
+	return addP((Number)x,y);
 }
 
-static public Number addP(Object x, long y){
-	return addP(x,(Object)y);
+static public Number addP(Number x, long y){
+	return addP(x,(Number)y);
 }
 
 static public double add(double x, Object y){
@@ -3567,20 +3718,20 @@ static public double addP(long x, double y){
 	return x + y;
 }
 
-static public Number minus(long x, Object y){
-	return minus((Object)x,y);
+static public Number minus(long x, Number y){
+	return minus((Number)x,y);
 }
 
-static public Number minus(Object x, long y){
-	return minus(x,(Object)y);
+static public Number minus(Number x, long y){
+	return minus(x,(Number)y);
 }
 
-static public Number minusP(long x, Object y){
-	return minusP((Object)x,y);
+static public Number minusP(long x, Number y){
+	return minusP((Number)x,y);
 }
 
-static public Number minusP(Object x, long y){
-	return minusP(x,(Object)y);
+static public Number minusP(Number x, long y){
+	return minusP(x,(Number)y);
 }
 
 static public double minus(double x, Object y){
@@ -3615,20 +3766,20 @@ static public double minusP(long x, double y){
 	return x - y;
 }
 
-static public Number multiply(long x, Object y){
-	return multiply((Object)x,y);
+static public Number multiply(long x, Number y){
+	return multiply((Number)x,y);
 }
 
-static public Number multiply(Object x, long y){
-	return multiply(x,(Object)y);
+static public Number multiply(Number x, long y){
+	return multiply(x,(Number)y);
 }
 
-static public Number multiplyP(long x, Object y){
-	return multiplyP((Object)x,y);
+static public Number multiplyP(long x, Number y){
+	return multiplyP((Number)x,y);
 }
 
-static public Number multiplyP(Object x, long y){
-	return multiplyP(x,(Object)y);
+static public Number multiplyP(Number x, long y){
+	return multiplyP(x,(Number)y);
 }
 
 static public double multiply(double x, Object y){
@@ -3663,12 +3814,12 @@ static public double multiplyP(long x, double y){
 	return x * y;
 }
 
-static public Number divide(long x, Object y){
-	return divide((Object)x,y);
+static public Number divide(long x, Number y){
+	return divide((Number)x,y);
 }
 
-static public Number divide(Object x, long y){
-	return divide(x,(Object)y);
+static public Number divide(Number x, long y){
+	return divide(x,(Number)y);
 }
 
 static public double divide(double x, Object y){
@@ -3787,12 +3938,12 @@ static public boolean gte(long x, double y){
 	return x >= y;
 }
 
-static public boolean equiv(long x, Object y){
-	return equiv((Object)x,y);
+static public boolean equiv(long x, Number y){
+	return equiv((Number)x,y);
 }
 
-static public boolean equiv(Object x, long y){
-	return equiv(x,(Object)y);
+static public boolean equiv(Number x, long y){
+	return equiv(x,(Number) y);
 }
 
 static public boolean equiv(double x, Object y){

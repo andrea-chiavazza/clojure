@@ -912,7 +912,9 @@
    :inline-arities >1?
    :added "1.0"}
   ([] 0)
-  ([x] (cast Number x))
+  ([x] (if (instance? clojure.lang.Complex x)
+         x
+         (cast Number x)))
   ([x y] (. clojure.lang.Numbers (addP x y)))
   ([x y & more]
    (reduce1 +' (+' x y) more)))
@@ -924,7 +926,9 @@
    :inline-arities >1?
    :added "1.2"}
   ([] 0)
-  ([x] (cast Number x))
+  ([x] (if (instance? clojure.lang.Complex x)
+         x
+         (cast Number x)))
   ([x y] (. clojure.lang.Numbers (add x y)))
   ([x y & more]
      (reduce1 + (+ x y) more)))
@@ -936,7 +940,9 @@
    :inline-arities >1?
    :added "1.0"}
   ([] 1)
-  ([x] (cast Number x))
+  ([x] (if (instance? clojure.lang.Complex x)
+         x
+         (cast Number x)))
   ([x y] (. clojure.lang.Numbers (multiplyP x y)))
   ([x y & more]
    (reduce1 *' (*' x y) more)))
@@ -948,7 +954,9 @@
    :inline-arities >1?
    :added "1.2"}
   ([] 1)
-  ([x] (cast Number x))
+  ([x] (if (instance? clojure.lang.Complex x)
+         x
+         (cast Number x)))
   ([x y] (. clojure.lang.Numbers (multiply x y)))
   ([x y & more]
      (reduce1 * (* x y) more)))
@@ -1327,6 +1335,28 @@
    :static true}
   [n] (not (even? n)))
 
+(defn complex
+  "A complex number."
+  {:added "1.4"}
+  [r im]
+  (if (zero? im)
+    r
+    (new clojure.lang.Complex r im)))
+
+(defn complex?
+  "Returns true if n is a complex number."
+  {:added "1.4"}
+  [n] (instance? clojure.lang.Complex n))
+
+(defn real
+  "Real part of a complex number."
+  {:added "1.4"}
+  [c] (.real ^clojure.lang.Complex c))
+
+(defn imaginary
+  "Imaginary part of a complex number."
+  {:added "1.4"}
+  [c] (.imaginary ^clojure.lang.Complex c))
 
 ;;
 

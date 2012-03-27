@@ -143,7 +143,14 @@
 
       (+ 2/3) 2/3
       (+ 2/3 1) 5/3
-      (+ 2/3 1/3) 1 )
+      (+ 2/3 1/3) 1
+
+      (+ (complex 12 34)) (complex 12 34)
+      (+ (complex 12 34) (complex 5 6)) (complex 17 40)
+      (+ (complex 12/74 35/84) (complex 5 6/7)) (complex 191/37 107/84)
+      (+ (complex 13 34) (complex 29 -34)) 42
+      (+ (complex 12 34) 6) (complex 18 34)
+      (+ 6 (complex 12 34)) (complex 18 34) )
 
   (are [x y] (< (- x y) DELTA)
       (+ 1.2) 1.2
@@ -151,7 +158,7 @@
       (+ 1.1 2.2 3.3) 6.6 )
 
   (is (> (+ Integer/MAX_VALUE 10) Integer/MAX_VALUE))  ; no overflow
-  (is (thrown? ClassCastException (+ "ab" "cd"))) )    ; no string concatenation
+  (is (thrown? IllegalArgumentException (+ "ab" "cd"))) )    ; no string concatenation
 
 
 (deftest test-subtract
@@ -170,7 +177,14 @@
 
       (- 2/3) -2/3
       (- 2/3 1) -1/3
-      (- 2/3 1/3) 1/3 )
+      (- 2/3 1/3) 1/3
+
+      (- (complex 12 34)) (complex -12 -34)
+      (- (complex 12 34) (complex 5 6)) (complex 7 28)
+      (- (complex 2/7 34/62) (complex 5 12/11)) (complex -33/7 -185/341)
+      (- (complex 12 34) (complex 5 34)) 7
+      (- (complex 12 34) 6) (complex 6 34)
+      (- 6 (complex 12 34)) (complex -6 34) )
 
   (are [x y] (< (- x y) DELTA)
       (- 1.2) -1.2
@@ -193,7 +207,15 @@
 
       (* 1/2) 1/2
       (* 1/2 1/3) 1/6
-      (* 1/2 1/3 -1/4) -1/24 )
+      (* 1/2 1/3 -1/4) -1/24
+
+      (* (complex 12 34) (complex 56 78)) (complex -1980 2840)
+      (* (complex -12 34) (complex 56 78)) (complex -3324 968)
+      (* (complex 12 34) (complex -56 78)) (complex -3324 -968)
+      (* (complex 12 34) (complex 56 -78)) (complex 3324 968)
+      (* (complex 12 34) 78) (complex 936 2652)
+      (* 56 (complex 12 34)) (complex 672 1904)
+      (* (complex 12 26) (complex -36 78)) -2460 )
 
   (are [x y] (< (- x y) DELTA)
       (* 1.2) 1.2
@@ -220,7 +242,16 @@
       (/ -2) -1/2
       (/ -3 -2) 3/2
       (/ -4 -2) 2
-      (/ -4 2) -2 )
+      (/ -4 2) -2
+
+      (/ (complex 157767 271275) (complex 42 53)) (complex 4593 663)
+      (/ (complex 4593 663) 51) (complex 1531/17 13)
+      (/ 260750 (complex 63 59)) (complex 2205 -2065)
+      (/ (complex 157767 271275) (complex -42 -53)) (complex -4593 -663)
+      (/ (complex -157767 271275) (complex 42 53)) (complex 7751361/4573 19755201/4573)
+      (/ (complex 157767 -271275) (complex 42 53)) (complex -7751361/4573 -19755201/4573)
+      (/ (complex 157767 271275) (complex 42 -53)) (complex -7751361/4573 +19755201/4573)
+      (/ (complex 157767 271275) (complex 42.0 -53)) (complex -1695.0275530286465 4319.965230701946) )
 
   (are [x y] (< (- x y) DELTA)
       (/ 4.5 3) 1.5
@@ -228,8 +259,21 @@
 
   (is (thrown? ArithmeticException (/ 0)))
   (is (thrown? ArithmeticException (/ 2 0)))
+  (is (thrown? ArithmeticException (/ (complex 2 3) 0)))
   (is (thrown? IllegalArgumentException (/))) )
 
+(deftest test-complex
+  (is (= (complex 31 23) (complex 31 23)))
+  (are [x y] (== x y)
+    (complex 3154 23468) (complex 3154 23468)
+    (complex 3154.0 23468.0) (complex 3154.0 23468.0)
+    (complex 3154 23468) (complex 3154.0 23468.0)
+    (complex 3154/1 23468) (complex 3154.0 23468.0)
+    (complex 3154 23468) (complex 3154.0 23468.0)
+    (real (complex 3154 23468)) 3154
+    (imaginary (complex 3154 23468)) 23468
+    (real (complex 3154.0 23468)) 3154/1
+    (imaginary (complex 3154 23468)) 23468.0 ))
 
 ;; mod
 ;; http://en.wikipedia.org/wiki/Modulo_operation
